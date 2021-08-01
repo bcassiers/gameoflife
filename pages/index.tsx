@@ -1,15 +1,13 @@
 import Head from "next/head";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
 import { MoonIcon, PauseIcon, PlayIcon, SparklesIcon, SunIcon, XCircleIcon } from "@heroicons/react/outline";
 import _ from "lodash";
-import { useToast } from "@chakra-ui/react";
 import produce from "immer";
 
 export default function App(): JSX.Element {
   const [numCols, setNumCols] = useState(50);
   const [numRows, setNumRows] = useState(50);
-
+  const [generationCounter, setGenerationCounter] = useState(0);
   const emptyGrid = () => {
     return new Array(numRows).fill(new Array(numCols).fill(0));
   };
@@ -40,13 +38,15 @@ export default function App(): JSX.Element {
   ];
 
   const runningRef = useRef(running);
+  const counterRef = useRef(generationCounter);
   runningRef.current = running;
+  counterRef.current = generationCounter;
 
   const updateGrid = useCallback(() => {
     if (!runningRef.current) {
       return;
     }
-
+    setGenerationCounter(counterRef.current + 1);
     setGrid((grid) => {
       return produce(grid, (gridCopy) => {
         for (let i = 0; i < numRows; i++) {
@@ -114,6 +114,7 @@ export default function App(): JSX.Element {
                 onClick={() => {
                   setRunning(false);
                   randomGrid(0.15);
+                  setGenerationCounter(0);
                 }}
                 className="mx-auto p-1 text-xl shadow-sm rounded-md font-bold font-recoleta hover:bg-gray-200 text-embie-blue dark:bg-embie-blue dark:text-white bg-opacity-90 hover:bg-opacity-100 focus:outline-none focus:ring-0"
               >
@@ -123,11 +124,13 @@ export default function App(): JSX.Element {
                 onClick={() => {
                   setRunning(false);
                   setGrid(emptyGrid());
+                  setGenerationCounter(0);
                 }}
                 className="mx-auto p-1 text-xl shadow-sm rounded-md font-bold font-recoleta hover:bg-gray-200 text-embie-blue dark:bg-embie-blue dark:text-white bg-opacity-90 hover:bg-opacity-100 focus:outline-none focus:ring-0"
               >
                 <XCircleIcon className="w-8 h-8" />
               </button>
+              <p className="font-recoleta my-2">{`Generation : ${generationCounter}`}</p>
             </div>
             <div
               style={{
