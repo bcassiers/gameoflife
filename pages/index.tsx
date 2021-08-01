@@ -92,7 +92,7 @@ export default function App(): JSX.Element {
   }, [running]);
 
   return (
-    <div className="min-h-screen min-w-screen bg-embie-grey bg-opacity-50 dark:bg-black dark:bg-opacity-100 flex flex-col py-16 space-y-5 sm:space-y-10 text-center px-4">
+    <div className="min-h-screen min-w-screen bg-embie-grey bg-opacity-50 dark:bg-black dark:bg-opacity-100 flex flex-col py-16 space-y-5 sm:space-y-10 text-center px-4 transition-all duration-700">
       <Head>
         <title>{"Conway's game of life | Embie"}</title>
         <link rel="icon" href="/favicon.ico" />
