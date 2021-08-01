@@ -101,14 +101,15 @@ export default function App(): JSX.Element {
       <div className="h-full mt-32 mb-10">
         <div className="bg-white dark:bg-embie-blue overflow-hidden shadow-xl h-full rounded-lg sm:w-4/5 mx-auto">
           <div className="px-10 py-10 2xl:py-24 sm:p-6 space-y-3">
-            <div className="space-x-3 flex flex-row">
+            <div className="space-x-3 flex flex-row rounded-lg border-embie-red border border-3 p-3 mr-auto">
+              <p className="font-recoleta my-2 dark:text-white font-bold text-lg mr-auto">{`Gen. ${generationCounter}`}</p>
               <button
                 onClick={() => {
                   setRunning(!running);
                 }}
-                className="p-1 text-xl shadow-sm rounded-md font-bold font-recoleta hover:bg-gray-200 text-embie-blue dark:bg-embie-blue dark:text-white bg-opacity-90 hover:bg-opacity-100 focus:outline-none focus:ring-0"
+                className="px-2 rounded-md hover:bg-opacity-20 hover:bg-embie-blue dark:hover:bg-white dark:hover:bg-opacity-20 text-embie-blue dark:bg-embie-blue dark:text-white focus:outline-none focus:ring-0"
               >
-                {running ? <PauseIcon className="w-8 h-8" /> : <PlayIcon className="w-8 h-8" />}
+                {running ? <PauseIcon className="w-6 h-6" /> : <PlayIcon className="w-6 h-6" />}
               </button>
               <button
                 onClick={() => {
@@ -116,9 +117,9 @@ export default function App(): JSX.Element {
                   randomGrid(0.15);
                   setGenerationCounter(0);
                 }}
-                className="mx-auto p-1 text-xl shadow-sm rounded-md font-bold font-recoleta hover:bg-gray-200 text-embie-blue dark:bg-embie-blue dark:text-white bg-opacity-90 hover:bg-opacity-100 focus:outline-none focus:ring-0"
+                className="px-2 rounded-md hover:bg-opacity-20 hover:bg-embie-blue dark:hover:bg-white dark:hover:bg-opacity-20 text-embie-blue dark:bg-embie-blue dark:text-white focus:outline-none focus:ring-0"
               >
-                <SparklesIcon className="w-8 h-8" />
+                <SparklesIcon className="w-6 h-6" />
               </button>
               <button
                 onClick={() => {
@@ -126,11 +127,10 @@ export default function App(): JSX.Element {
                   setGrid(emptyGrid());
                   setGenerationCounter(0);
                 }}
-                className="mx-auto p-1 text-xl shadow-sm rounded-md font-bold font-recoleta hover:bg-gray-200 text-embie-blue dark:bg-embie-blue dark:text-white bg-opacity-90 hover:bg-opacity-100 focus:outline-none focus:ring-0"
+                className="px-2 rounded-md hover:bg-opacity-20 hover:bg-embie-blue dark:hover:bg-white dark:hover:bg-opacity-20 text-embie-blue dark:text-white focus:outline-none focus:ring-0"
               >
-                <XCircleIcon className="w-8 h-8" />
+                <XCircleIcon className="w-6 h-6" />
               </button>
-              <p className="font-recoleta my-2 dark:text-white font-bold">{`Generation : ${generationCounter}`}</p>
             </div>
             <div
               style={{
