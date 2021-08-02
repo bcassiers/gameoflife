@@ -1,8 +1,8 @@
 import Head from "next/head";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { MoonIcon, PauseIcon, PlayIcon, SparklesIcon, SunIcon, XCircleIcon } from "@heroicons/react/outline";
-import _ from "lodash";
 import produce from "immer";
+import useKeyboardShortcut from "util/use-keyboard-shortcut";
 
 export default function App(): JSX.Element {
   const [numCols, setNumCols] = useState(50);
@@ -91,6 +91,26 @@ export default function App(): JSX.Element {
     }
   }, [running]);
 
+  const playPauseHandler = () => {
+    setRunning(!running);
+  };
+
+  const randomizeGridHandler = () => {
+    setRunning(false);
+    randomGrid(0.15);
+    setGenerationCounter(0);
+  };
+
+  const clearGridHandler = () => {
+    setRunning(false);
+    setGrid(emptyGrid());
+    setGenerationCounter(0);
+  };
+
+  useKeyboardShortcut(["P"], playPauseHandler, { overrideSystem: false });
+  useKeyboardShortcut(["Shift", "R"], randomizeGridHandler, { overrideSystem: false });
+  useKeyboardShortcut(["Shift", "C"], clearGridHandler, { overrideSystem: false });
+
   return (
     <div className="min-h-screen min-w-screen bg-embie-grey bg-opacity-50 dark:bg-black dark:bg-opacity-100 flex flex-col py-16 space-y-5 sm:space-y-10 text-center px-4 transition-all duration-700">
       <Head>
@@ -104,29 +124,19 @@ export default function App(): JSX.Element {
             <div className="space-x-3 flex flex-row rounded-lg border-embie-red border border-3 p-3 mr-auto">
               <p className="font-recoleta my-2 dark:text-white font-bold text-lg mr-auto">{`Gen. ${generationCounter}`}</p>
               <button
-                onClick={() => {
-                  setRunning(!running);
-                }}
+                onClick={playPauseHandler}
                 className="px-2 rounded-md hover:bg-opacity-20 hover:bg-embie-blue dark:hover:bg-white dark:hover:bg-opacity-20 text-embie-blue dark:bg-embie-blue dark:text-white focus:outline-none focus:ring-0"
               >
                 {running ? <PauseIcon className="w-6 h-6" /> : <PlayIcon className="w-6 h-6" />}
               </button>
               <button
-                onClick={() => {
-                  setRunning(false);
-                  randomGrid(0.15);
-                  setGenerationCounter(0);
-                }}
+                onClick={randomizeGridHandler}
                 className="px-2 rounded-md hover:bg-opacity-20 hover:bg-embie-blue dark:hover:bg-white dark:hover:bg-opacity-20 text-embie-blue dark:bg-embie-blue dark:text-white focus:outline-none focus:ring-0"
               >
                 <SparklesIcon className="w-6 h-6" />
               </button>
               <button
-                onClick={() => {
-                  setRunning(false);
-                  setGrid(emptyGrid());
-                  setGenerationCounter(0);
-                }}
+                onClick={clearGridHandler}
                 className="px-2 rounded-md hover:bg-opacity-20 hover:bg-embie-blue dark:hover:bg-white dark:hover:bg-opacity-20 text-embie-blue dark:text-white focus:outline-none focus:ring-0"
               >
                 <XCircleIcon className="w-6 h-6" />
