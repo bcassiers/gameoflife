@@ -91,7 +91,7 @@ export default function App(): JSX.Element {
       });
     });
 
-    setTimeout(updateGrid, 200);
+    setTimeout(updateGrid, 300);
   }, []);
 
   const randomGrid = (lifePercentage: number) => {
