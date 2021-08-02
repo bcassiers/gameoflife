@@ -1,6 +1,17 @@
 import Head from "next/head";
 import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import { LightningBoltIcon, MoonIcon, PauseIcon, PlayIcon, SparklesIcon, StarIcon, SunIcon, XCircleIcon } from "@heroicons/react/outline";
+import {
+  BookOpenIcon,
+  LightningBoltIcon,
+  MoonIcon,
+  PauseIcon,
+  PlayIcon,
+  QuestionMarkCircleIcon,
+  SparklesIcon,
+  StarIcon,
+  SunIcon,
+  XCircleIcon,
+} from "@heroicons/react/outline";
 import produce from "immer";
 import useKeyboardShortcut from "util/use-keyboard-shortcut";
 import { Dialog, Transition } from "@headlessui/react";
@@ -10,7 +21,7 @@ export default function App(): JSX.Element {
   const [numCols, setNumCols] = useState(50);
   const [numRows, setNumRows] = useState(50);
   const [generationCounter, setGenerationCounter] = useState(0);
-  const [keyboardHelpOpen, setKeyboardHelpOpen] = useState(false);
+  const [keyboardHelpOpen, setHelpOpen] = useState(false);
   const [placingShape, setPlacingShape] = useState(false);
   const emptyGrid = () => {
     return new Array(numRows).fill(new Array(numCols).fill(0));
@@ -80,7 +91,7 @@ export default function App(): JSX.Element {
       });
     });
 
-    setTimeout(updateGrid, 500);
+    setTimeout(updateGrid, 200);
   }, []);
 
   const randomGrid = (lifePercentage: number) => {
@@ -148,12 +159,16 @@ export default function App(): JSX.Element {
     }
   };
 
+  const toggleHelpHandler = () => {
+    setHelpOpen((prevState) => !prevState);
+  };
+
   useKeyboardShortcut(["P"], playPauseHandler, { overrideSystem: false });
   useKeyboardShortcut(["Shift", "R"], randomizeGridHandler, { overrideSystem: false });
   useKeyboardShortcut(["Shift", "C"], clearGridHandler, { overrideSystem: false });
   useKeyboardShortcut(["Shift", "N"], toggleThemeHandler, { overrideSystem: false });
   useKeyboardShortcut(["Shift", "S"], placeShapeHandler, { overrideSystem: false });
-  useKeyboardShortcut(["/"], () => setKeyboardHelpOpen((prevState) => !prevState), { overrideSystem: false });
+  useKeyboardShortcut(["/"], toggleHelpHandler, { overrideSystem: false });
 
   return (
     <div className="min-h-screen min-w-screen bg-embie-grey bg-opacity-50 dark:bg-black dark:bg-opacity-100 flex flex-col py-16 space-y-5 sm:space-y-10 text-center px-4 transition-all duration-700">
@@ -162,7 +177,7 @@ export default function App(): JSX.Element {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Transition.Root show={keyboardHelpOpen} as={Fragment}>
-        <Dialog as="div" static className="fixed z-10 inset-0 overflow-y-auto" open={keyboardHelpOpen} onClose={setKeyboardHelpOpen}>
+        <Dialog as="div" static className="fixed z-10 inset-0 overflow-y-auto" open={keyboardHelpOpen} onClose={setHelpOpen}>
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <Transition.Child
               as={Fragment}
@@ -192,13 +207,37 @@ export default function App(): JSX.Element {
               <div className="inline-block align-bottom bg-white dark:bg-embie-blue rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
                 <div>
                   <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-embie-blue dark:bg-embie-yellow">
-                    <LightningBoltIcon className="h-6 w-6 text-embie-yellow dark:text-embie-blue" aria-hidden="true" />
+                    <BookOpenIcon className="h-6 w-6 text-embie-yellow dark:text-embie-blue" aria-hidden="true" />
                   </div>
                   <div className="mt-3 text-center sm:mt-5">
                     <Dialog.Title as="h3" className="text-lg font-recoleta font-bold text-embie-blue dark:text-white">
-                      Keyboard shortcuts
+                      About
                     </Dialog.Title>
-                    <div className="mt-5 text-sm text-embie-blue dark:text-white font-recoleta space-y-5">
+                    <div className="mt-3">
+                      <p className="text-sm text-left leading-6 font-recoleta text-embie-blue dark:text-white">
+                        This game is a reproduction of{" "}
+                        <a
+                          href="https://en.wikipedia.org/wiki/Conway's_Game_of_Life"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="border-b hover:border-embie-blue dark:hover:border-embie-red"
+                        >
+                          {`Conway's game of life.\n`}
+                        </a>{" "}
+                      </p>
+                      <p className="mt-3 text-sm text-left leading-6 font-recoleta text-embie-blue dark:text-white">
+                        <span className="text-md font-semibold">Rules :</span>
+                        <ol>
+                          <li>👍 A live cell with 2 or 3 live neighbours survives.</li>
+                          <li>🥳 A dead cell with 3 live neighbours becomes alive.</li>
+                          <li>☠️ All other live cells die in the next generation.</li>
+                        </ol>
+                      </p>
+                    </div>
+                    <div className="mt-3 text-sm text-embie-blue dark:text-white font-recoleta space-y-5">
+                      <p className="mt-2 text-sm text-left leading-6 font-recoleta text-embie-blue dark:text-white">
+                        <span className="text-md font-semibold">Keyboard shortcuts :</span>
+                      </p>
                       <div className="flex justify-between ">
                         <div>
                           <KeyboardKey>P</KeyboardKey>
@@ -236,11 +275,16 @@ export default function App(): JSX.Element {
                   <button
                     type="button"
                     className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-embie-blue dark:bg-embie-yellow text-base font-bold font-recoleta text-white dark:text-embie-blue hover:bg-opacity-90 focus:outline-none focus:ring-0 sm:text-sm"
-                    onClick={() => setKeyboardHelpOpen(false)}
+                    onClick={() => setHelpOpen(false)}
                   >
                     Back
                   </button>
                 </div>
+                <p className="text-xs text-center mt-3 font-recoleta text-embie-blue dark:text-white">
+                  <a className="border-b hover:border-embie-blue dark:hover:border-embie-red" href="https://embie.be">
+                    Made with 🧠, 🍟 and 🍺 in Brussels.
+                  </a>
+                </p>
               </div>
             </Transition.Child>
           </div>
@@ -275,6 +319,14 @@ export default function App(): JSX.Element {
                   className="px-2 rounded-md hover:bg-opacity-20 hover:bg-embie-blue dark:hover:bg-white dark:hover:bg-opacity-20 text-embie-blue dark:text-white focus:outline-none focus:ring-0"
                 >
                   <XCircleIcon className="w-6 h-6" />
+                </button>
+              </Tooltip>
+              <Tooltip label="Help (/)" fontSize="md" aria-label="Help">
+                <button
+                  onClick={toggleHelpHandler}
+                  className="px-2 rounded-md hover:bg-opacity-20 hover:bg-embie-blue dark:hover:bg-white dark:hover:bg-opacity-20 text-embie-blue dark:text-white focus:outline-none focus:ring-0"
+                >
+                  <QuestionMarkCircleIcon className="w-6 h-6" />
                 </button>
               </Tooltip>
               {/* <Tooltip label="Place new shape" fontSize="md" aria-label="Place new shape">
