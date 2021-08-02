@@ -1,15 +1,17 @@
 import Head from "next/head";
 import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import { LightningBoltIcon, MoonIcon, PauseIcon, PlayIcon, SparklesIcon, SunIcon, XCircleIcon } from "@heroicons/react/outline";
+import { LightningBoltIcon, MoonIcon, PauseIcon, PlayIcon, SparklesIcon, StarIcon, SunIcon, XCircleIcon } from "@heroicons/react/outline";
 import produce from "immer";
 import useKeyboardShortcut from "util/use-keyboard-shortcut";
 import { Dialog, Transition } from "@headlessui/react";
+import { Tooltip } from "@chakra-ui/react";
 
 export default function App(): JSX.Element {
   const [numCols, setNumCols] = useState(50);
   const [numRows, setNumRows] = useState(50);
   const [generationCounter, setGenerationCounter] = useState(0);
   const [keyboardHelpOpen, setKeyboardHelpOpen] = useState(false);
+  const [placingShape, setPlacingShape] = useState(false);
   const emptyGrid = () => {
     return new Array(numRows).fill(new Array(numCols).fill(0));
   };
@@ -37,6 +39,12 @@ export default function App(): JSX.Element {
     [0, -1],
     [-1, -1],
     [-1, 0],
+  ];
+
+  const flower = [
+    [0, 1, 1, 0],
+    [1, 0, 0, 1],
+    [0, 1, 1, 0],
   ];
 
   const runningRef = useRef(running);
@@ -72,7 +80,7 @@ export default function App(): JSX.Element {
       });
     });
 
-    setTimeout(updateGrid, 300);
+    setTimeout(updateGrid, 500);
   }, []);
 
   const randomGrid = (lifePercentage: number) => {
@@ -109,6 +117,27 @@ export default function App(): JSX.Element {
     setGenerationCounter(0);
   };
 
+  const placeShapeHandler = () => {
+    setPlacingShape((prevPlacingShape) => !prevPlacingShape);
+  };
+
+  const gridClickHandler = (row, col) => {
+    const newGrid = produce(grid, (gridCopy) => {
+      if (!placingShape) {
+        gridCopy[row][col] = 1 - grid[row][col];
+      } else {
+        const maxRow = Math.min(numRows, row + flower.length);
+        const maxCol = Math.min(numCols, col + flower[0].length);
+        for (let i = row; i < maxRow; i++) {
+          for (let j = col; j < maxCol; j++) {
+            gridCopy[i][j] = flower[i - row][j - col];
+          }
+        }
+      }
+    });
+    setGrid(newGrid);
+  };
+
   const toggleThemeHandler = () => {
     if (theme === "dark") {
       setTheme("light");
@@ -123,6 +152,7 @@ export default function App(): JSX.Element {
   useKeyboardShortcut(["Shift", "R"], randomizeGridHandler, { overrideSystem: false });
   useKeyboardShortcut(["Shift", "C"], clearGridHandler, { overrideSystem: false });
   useKeyboardShortcut(["Shift", "N"], toggleThemeHandler, { overrideSystem: false });
+  useKeyboardShortcut(["Shift", "S"], placeShapeHandler, { overrideSystem: false });
   useKeyboardShortcut(["/"], () => setKeyboardHelpOpen((prevState) => !prevState), { overrideSystem: false });
 
   return (
@@ -222,24 +252,39 @@ export default function App(): JSX.Element {
           <div className="px-10 py-10 2xl:py-24 sm:p-6 space-y-3">
             <div className="space-x-3 flex flex-row rounded-lg border-embie-red border border-3 p-3 mr-auto">
               <p className="font-recoleta my-2 dark:text-white font-bold text-lg mr-auto">{`Gen. ${generationCounter}`}</p>
-              <button
-                onClick={playPauseHandler}
-                className="px-2 rounded-md hover:bg-opacity-20 hover:bg-embie-blue dark:hover:bg-white dark:hover:bg-opacity-20 text-embie-blue dark:bg-embie-blue dark:text-white focus:outline-none focus:ring-0"
-              >
-                {running ? <PauseIcon className="w-6 h-6" /> : <PlayIcon className="w-6 h-6" />}
-              </button>
-              <button
-                onClick={randomizeGridHandler}
-                className="px-2 rounded-md hover:bg-opacity-20 hover:bg-embie-blue dark:hover:bg-white dark:hover:bg-opacity-20 text-embie-blue dark:bg-embie-blue dark:text-white focus:outline-none focus:ring-0"
-              >
-                <SparklesIcon className="w-6 h-6" />
-              </button>
-              <button
-                onClick={clearGridHandler}
-                className="px-2 rounded-md hover:bg-opacity-20 hover:bg-embie-blue dark:hover:bg-white dark:hover:bg-opacity-20 text-embie-blue dark:text-white focus:outline-none focus:ring-0"
-              >
-                <XCircleIcon className="w-6 h-6" />
-              </button>
+
+              <Tooltip label={`${running ? "Pause" : "Play"} (P)`} fontSize="md" aria-label={`${running ? "Pause" : "Play"}`}>
+                <button
+                  onClick={playPauseHandler}
+                  className="px-2 rounded-md hover:bg-opacity-20 hover:bg-embie-blue dark:hover:bg-white dark:hover:bg-opacity-20 text-embie-blue dark:bg-embie-blue dark:text-white focus:outline-none focus:ring-0"
+                >
+                  {running ? <PauseIcon className="w-6 h-6" /> : <PlayIcon className="w-6 h-6" />}
+                </button>
+              </Tooltip>
+              <Tooltip label="Randomize grid (Shift + R)" fontSize="md" aria-label="Randomize grid">
+                <button
+                  onClick={randomizeGridHandler}
+                  className="px-2 rounded-md hover:bg-opacity-20 hover:bg-embie-blue dark:hover:bg-white dark:hover:bg-opacity-20 text-embie-blue dark:bg-embie-blue dark:text-white focus:outline-none focus:ring-0"
+                >
+                  <SparklesIcon className="w-6 h-6" />
+                </button>
+              </Tooltip>
+              <Tooltip label="Clear grid ⚠️ (Shift + C)" fontSize="md" aria-label="Clear grid">
+                <button
+                  onClick={clearGridHandler}
+                  className="px-2 rounded-md hover:bg-opacity-20 hover:bg-embie-blue dark:hover:bg-white dark:hover:bg-opacity-20 text-embie-blue dark:text-white focus:outline-none focus:ring-0"
+                >
+                  <XCircleIcon className="w-6 h-6" />
+                </button>
+              </Tooltip>
+              {/* <Tooltip label="Place new shape" fontSize="md" aria-label="Place new shape">
+                <button
+                  onClick={placeShapeHandler}
+                  className="px-2 rounded-md hover:bg-opacity-20 hover:bg-embie-blue dark:hover:bg-white dark:hover:bg-opacity-20 text-embie-blue dark:text-white focus:outline-none focus:ring-0"
+                >
+                  <StarIcon className="w-6 h-6" />
+                </button>
+              </Tooltip> */}
             </div>
             <div
               style={{
@@ -254,12 +299,7 @@ export default function App(): JSX.Element {
                     key={`${i}${j}`}
                     className={`border dark:border-gray-600 w-full ${cell === 0 ? "bg-transparent" : "bg-embie-blue dark:bg-embie-yellow"}`}
                     style={{ aspectRatio: "1" }}
-                    onClick={() => {
-                      const newGrid = produce(grid, (gridCopy) => {
-                        gridCopy[i][j] = 1 - grid[i][j];
-                      });
-                      setGrid(newGrid);
-                    }}
+                    onClick={() => gridClickHandler(i, j)}
                   />
                 ))
               )}
