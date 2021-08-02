@@ -16,6 +16,7 @@ import produce from "immer";
 import useKeyboardShortcut from "util/use-keyboard-shortcut";
 import { Dialog, Transition } from "@headlessui/react";
 import { Tooltip } from "@chakra-ui/react";
+import { p24gun } from "util/shapeLibrary";
 
 export default function App(): JSX.Element {
   const [numCols, setNumCols] = useState(50);
@@ -52,12 +53,6 @@ export default function App(): JSX.Element {
     [-1, 0],
   ];
 
-  const flower = [
-    [0, 1, 1, 0],
-    [1, 0, 0, 1],
-    [0, 1, 1, 0],
-  ];
-
   const runningRef = useRef(running);
   const counterRef = useRef(generationCounter);
   runningRef.current = running;
@@ -91,7 +86,7 @@ export default function App(): JSX.Element {
       });
     });
 
-    setTimeout(updateGrid, 300);
+    setTimeout(updateGrid, 20);
   }, []);
 
   const randomGrid = (lifePercentage: number) => {
@@ -137,11 +132,11 @@ export default function App(): JSX.Element {
       if (!placingShape) {
         gridCopy[row][col] = 1 - grid[row][col];
       } else {
-        const maxRow = Math.min(numRows, row + flower.length);
-        const maxCol = Math.min(numCols, col + flower[0].length);
+        const maxRow = Math.min(numRows, row + p24gun.length);
+        const maxCol = Math.min(numCols, col + p24gun[0].length);
         for (let i = row; i < maxRow; i++) {
           for (let j = col; j < maxCol; j++) {
-            gridCopy[i][j] = flower[i - row][j - col];
+            gridCopy[i][j] = p24gun[i - row][j - col];
           }
         }
       }
@@ -220,7 +215,7 @@ export default function App(): JSX.Element {
                           href="https://en.wikipedia.org/wiki/Conway's_Game_of_Life"
                           target="_blank"
                           rel="noreferrer"
-                          className="border-b hover:border-embie-blue dark:hover:border-embie-red"
+                          className="border-b hover:border-embie-blue dark:hover:border-embie-red focus:ring-0"
                         >
                           {`Conway's game of life.\n`}
                         </a>{" "}
@@ -281,7 +276,7 @@ export default function App(): JSX.Element {
                   </button>
                 </div>
                 <p className="text-xs text-center mt-3 font-recoleta text-embie-blue dark:text-white">
-                  <a className="border-b hover:border-embie-blue dark:hover:border-embie-red" href="https://embie.be">
+                  <a className="border-b hover:border-embie-blue dark:hover:border-embie-red focus:ring-0" href="https://embie.be">
                     Made with 🧠, 🍟 and 🍺 in Brussels.
                   </a>
                 </p>
