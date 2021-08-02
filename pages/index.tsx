@@ -109,9 +109,20 @@ export default function App(): JSX.Element {
     setGenerationCounter(0);
   };
 
+  const toggleThemeHandler = () => {
+    if (theme === "dark") {
+      setTheme("light");
+      window.localStorage.theme = "light";
+    } else {
+      setTheme("dark");
+      window.localStorage.theme = "dark";
+    }
+  };
+
   useKeyboardShortcut(["P"], playPauseHandler, { overrideSystem: false });
   useKeyboardShortcut(["Shift", "R"], randomizeGridHandler, { overrideSystem: false });
   useKeyboardShortcut(["Shift", "C"], clearGridHandler, { overrideSystem: false });
+  useKeyboardShortcut(["Shift", "N"], toggleThemeHandler, { overrideSystem: false });
   useKeyboardShortcut(["/"], () => setKeyboardHelpOpen((prevState) => !prevState), { overrideSystem: false });
 
   return (
@@ -148,16 +159,16 @@ export default function App(): JSX.Element {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+              <div className="inline-block align-bottom bg-white dark:bg-embie-blue rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
                 <div>
-                  <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-embie-blue">
-                    <LightningBoltIcon className="h-6 w-6 text-embie-yellow" aria-hidden="true" />
+                  <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-embie-blue dark:bg-embie-yellow">
+                    <LightningBoltIcon className="h-6 w-6 text-embie-yellow dark:text-embie-blue" aria-hidden="true" />
                   </div>
                   <div className="mt-3 text-center sm:mt-5">
-                    <Dialog.Title as="h3" className="text-lg font-recoleta font-bold text-embie-blue">
+                    <Dialog.Title as="h3" className="text-lg font-recoleta font-bold text-embie-blue dark:text-white">
                       Keyboard shortcuts
                     </Dialog.Title>
-                    <div className="mt-5 text-sm text-embie-blue font-recoleta space-y-5">
+                    <div className="mt-5 text-sm text-embie-blue dark:text-white font-recoleta space-y-5">
                       <div className="flex justify-between ">
                         <div>
                           <KeyboardKey>P</KeyboardKey>
@@ -178,15 +189,15 @@ export default function App(): JSX.Element {
                       </div>
                       <div className="flex justify-between">
                         <div>
-                          <KeyboardKey>/</KeyboardKey>
+                          <KeyboardKey>Shift</KeyboardKey> + <KeyboardKey>N</KeyboardKey>
                         </div>
-                        <div>Show this menu</div>
+                        <div>Toggle dark mode</div>
                       </div>
                       <div className="flex justify-between">
                         <div>
-                          <KeyboardKey>Esc</KeyboardKey>
+                          <KeyboardKey>/</KeyboardKey>
                         </div>
-                        <div>Close this menu</div>
+                        <div>Show this menu</div>
                       </div>
                     </div>
                   </div>
@@ -194,7 +205,7 @@ export default function App(): JSX.Element {
                 <div className="mt-5 sm:mt-6">
                   <button
                     type="button"
-                    className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-embie-blue text-base font-bold font-recoleta text-white hover:bg-opacity-90 focus:outline-none focus:ring-0 sm:text-sm"
+                    className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-embie-blue dark:bg-embie-yellow text-base font-bold font-recoleta text-white dark:text-embie-blue hover:bg-opacity-90 focus:outline-none focus:ring-0 sm:text-sm"
                     onClick={() => setKeyboardHelpOpen(false)}
                   >
                     Back
@@ -260,15 +271,7 @@ export default function App(): JSX.Element {
         <img src={theme === "dark" ? "/logo_neg.png" : "/logo.png"} className="object-scale-down h-20"></img>
       </a>
       <button
-        onClick={() => {
-          if (theme === "dark") {
-            setTheme("light");
-            window.localStorage.theme = "light";
-          } else {
-            setTheme("dark");
-            window.localStorage.theme = "dark";
-          }
-        }}
+        onClick={toggleThemeHandler}
         className="mx-auto p-4 text-xl border border-transparent shadow-sm rounded-md font-bold font-recoleta bg-white text-embie-blue dark:bg-embie-blue dark:text-white bg-opacity-90 hover:bg-opacity-100 focus:outline-none focus:ring-0"
       >
         {theme === "dark" ? <MoonIcon className="w-5 h-5" /> : <SunIcon className="w-5 h-5" />}
