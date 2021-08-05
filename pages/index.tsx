@@ -21,6 +21,9 @@ import { p24gun } from "util/shapeLibrary";
 export default function App(): JSX.Element {
   const [numCols, setNumCols] = useState(50);
   const [numRows, setNumRows] = useState(50);
+  const [currentOperation, setCurrentOperation] = useState(null);
+  const SWITCH_ON = 1;
+  const SWITCH_OFF = 2;
   const [generationCounter, setGenerationCounter] = useState(0);
   const [keyboardHelpOpen, setHelpOpen] = useState(false);
   const [placingShape, setPlacingShape] = useState(false);
@@ -127,10 +130,10 @@ export default function App(): JSX.Element {
     setPlacingShape((prevPlacingShape) => !prevPlacingShape);
   };
 
-  const gridClickHandler = (row, col) => {
+  const gridClickHandler = (row, col, forcedValue = null) => {
     const newGrid = produce(grid, (gridCopy) => {
       if (!placingShape) {
-        gridCopy[row][col] = 1 - grid[row][col];
+        gridCopy[row][col] = forcedValue === null ? 1 - grid[row][col] : forcedValue;
       } else {
         const maxRow = Math.min(numRows, row + p24gun.length);
         const maxCol = Math.min(numCols, col + p24gun[0].length);
@@ -142,6 +145,10 @@ export default function App(): JSX.Element {
       }
     });
     setGrid(newGrid);
+  };
+
+  const gridHoverHandler = (row, col) => {
+    if (currentOperation !== null) gridClickHandler(row, col, currentOperation);
   };
 
   const toggleThemeHandler = () => {
@@ -339,7 +346,7 @@ export default function App(): JSX.Element {
                 display: "grid",
                 gridTemplateColumns: `repeat(${numCols}, 1fr)`,
               }}
-              className="items-center "
+              className="items-center"
             >
               {grid?.map((col, i) =>
                 col.map((cell, j) => (
@@ -347,8 +354,12 @@ export default function App(): JSX.Element {
                     key={`${i}${j}`}
                     className={`border dark:border-gray-600 w-full ${cell === 0 ? "bg-transparent" : "bg-embie-blue dark:bg-embie-yellow"}`}
                     style={{ aspectRatio: "1" }}
-                    onClick={() => gridClickHandler(i, j)}
-                    onClick
+                    onMouseDown={() => {
+                      setCurrentOperation(!cell);
+                      gridClickHandler(i, j);
+                    }}
+                    onMouseUp={() => setCurrentOperation(null)}
+                    onMouseEnter={() => gridHoverHandler(i, j)}
                   />
                 ))
               )}
