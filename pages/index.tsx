@@ -166,7 +166,7 @@ export default function App(): JSX.Element {
   };
 
   useKeyboardShortcut(["P"], playPauseHandler, { overrideSystem: false });
-  useKeyboardShortcut(["Space"], playPauseHandler, { overrideSystem: false });
+  // useKeyboardShortcut(["Space"], playPauseHandler, { overrideSystem: true });
   useKeyboardShortcut(["Shift", "R"], randomizeGridHandler, { overrideSystem: false });
   useKeyboardShortcut(["Shift", "C"], clearGridHandler, { overrideSystem: false });
   useKeyboardShortcut(["Shift", "N"], toggleThemeHandler, { overrideSystem: false });
@@ -243,7 +243,8 @@ export default function App(): JSX.Element {
                       </p>
                       <div className="flex justify-between ">
                         <div>
-                          <KeyboardKey>P</KeyboardKey> or <KeyboardKey>Space</KeyboardKey>
+                          <KeyboardKey>P</KeyboardKey>
+                          {/* or <KeyboardKey>Space</KeyboardKey> */}
                         </div>
                         <div>Play/Pause</div>
                       </div>
@@ -356,7 +357,7 @@ export default function App(): JSX.Element {
                     style={{ aspectRatio: "1" }}
                     onMouseDown={() => {
                       setCurrentOperation(!cell);
-                      gridClickHandler(i, j);
+                      gridClickHandler(i, j, !cell);
                     }}
                     onMouseUp={() => setCurrentOperation(null)}
                     onMouseEnter={() => gridHoverHandler(i, j)}
