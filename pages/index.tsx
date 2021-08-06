@@ -134,6 +134,7 @@ export default function App(): JSX.Element {
     const newGrid = produce(grid, (gridCopy) => {
       if (!placingShape) {
         gridCopy[row][col] = forcedValue === null ? 1 - grid[row][col] : forcedValue;
+        setCurrentOperation(gridCopy[row][col]);
       } else {
         const maxRow = Math.min(numRows, row + p24gun.length);
         const maxCol = Math.min(numCols, col + p24gun[0].length);
@@ -356,8 +357,7 @@ export default function App(): JSX.Element {
                     className={`border dark:border-gray-600 w-full ${cell === 0 ? "bg-transparent" : "bg-embie-blue dark:bg-embie-yellow"}`}
                     style={{ aspectRatio: "1" }}
                     onMouseDown={() => {
-                      setCurrentOperation(!cell);
-                      gridClickHandler(i, j, !cell);
+                      gridClickHandler(i, j);
                     }}
                     onMouseUp={() => setCurrentOperation(null)}
                     onMouseEnter={() => gridHoverHandler(i, j)}
